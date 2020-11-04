@@ -1,9 +1,7 @@
-const { response } = require("express");
-
 const CACHE_NAME = "static-cache-v2";
 const DATA_CACHE_NAME = "data-cache-v1";
 
-const FILES_TO_CACHE =[
+const FILES_TO_CACHE = [
   "/",
   "index.js",
   "/icons/icon-192x192",
@@ -12,7 +10,7 @@ const FILES_TO_CACHE =[
 ];
 
 // install
-self.addEventListener("install", function(event) {
+self.addEventListener("install", function (event) {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       console.log("Your files were pre-cached successfully!");
@@ -23,7 +21,7 @@ self.addEventListener("install", function(event) {
   self.skipWaiting();
 });
 // activate
-self.addEventListener("activate", function(event) {
+self.addEventListener("activate", function (event) {
   event.waitUntil(
     caches.keys().then(keyList => {
       return Promise.all(
@@ -40,8 +38,8 @@ self.addEventListener("activate", function(event) {
   self.clients.claim();
 });
 // fetch
-self.addEventListener("fetch", function(event) {
-  
+self.addEventListener("fetch", function (event) {
+
   if (event.request.url.includes("/api/")) {
     event.respondWith(
       caches.open(DATA_CACHE_NAME).then(cache => {
@@ -62,12 +60,12 @@ self.addEventListener("fetch", function(event) {
     );
     return;
   }
-  
-    // respond from static cache, request is not for /api/*
-    event.respondWith(
-      caches.match(event.request).then(response => {
-        return response || fetch(event.request);
-      })
-    );
-  
+
+  // respond from static cache, request is not for /api/*
+  event.respondWith(
+    caches.match(event.request).then(response => {
+      return response || fetch(event.request);
+    })
+  );
+
 });
